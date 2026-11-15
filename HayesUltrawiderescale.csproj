@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Written by SetSptPath.bat; defines $(SptDir). Not committed to git. -->
+  <Import Project="SptPath.props" Condition="Exists('SptPath.props')" />
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <AssemblyName>HayesUltrawiderescale</AssemblyName>
+    <RootNamespace>HayesUltrawiderescale</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DebugType>none</DebugType>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <Target Name="CheckSptDir" BeforeTargets="ResolveAssemblyReferences;CoreCompile">
+    <Error Condition="'$(SptDir)' == ''" Text="SPT folder not set. Run SetSptPath.bat first." />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SptDir)' != ''">
+    <Reference Include="BepInEx">
+      <HintPath>$(SptDir)\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(SptDir)\BepInEx\core\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(SptDir)\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(SptDir)\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(SptDir)\EscapeFromTarkov_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(SptDir)\EscapeFromTarkov_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- After every build, copy the DLL straight into the SPT install -->
+  <Target Name="CopyToSpt" AfterTargets="Build" Condition="'$(SptDir)' != ''">
+    <MakeDir Directories="$(SptDir)\BepInEx\plugins\HayesUltrawiderescale" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SptDir)\BepInEx\plugins\HayesUltrawiderescale" />
+    <Message Importance="high" Text="Deployed to $(SptDir)\BepInEx\plugins\HayesUltrawiderescale" />
+  </Target>
+
+</Project>

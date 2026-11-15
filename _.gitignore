@@ -1,0 +1,5 @@
+bin/
+obj/
+SptPath.props
+*.user
+.vs/
